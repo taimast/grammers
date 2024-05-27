@@ -35,7 +35,7 @@ use std::net::{Ipv4Addr, Ipv6Addr};
 // Needed for auto-generated definitions.
 use grammers_tl_types::{deserialize, Deserializable, Identifiable, Serializable};
 
-pub struct TelethonStringSession(String);
+pub struct TelethonStringSession(pub String);
 
 #[derive(Debug)]
 pub struct Session {
