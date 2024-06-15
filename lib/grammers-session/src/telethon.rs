@@ -8,7 +8,7 @@ use crate::generated::types;
 use crate::generated::types::DataCenter;
 use crate::Session;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Clone, Deserialize, Serialize)]
 pub struct TelethonSession {
     pub dc_id: i32,
     pub ip: String,
