@@ -953,7 +953,7 @@ impl TryFrom<&Vec<u8>> for Uploaded {
     }
 }
 
-impl Into<Vec<u8>> for Uploaded {
+impl Into<Vec<u8>> for &Uploaded {
     fn into(self) -> Vec<u8> {
         self.input_file.to_bytes()
     }
