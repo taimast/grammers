@@ -8,9 +8,11 @@
 use grammers_crypto::hex;
 use grammers_tl_types as tl;
 use std::fmt;
+use serde::{Deserialize, Serialize};
 
 #[repr(u8)]
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Serialize, Deserialize)]
 pub enum PackedType {
     // The fancy bit pattern may enable some optimizations.
     // * 2nd bit for tl::enums::Peer::User
@@ -27,6 +29,7 @@ pub enum PackedType {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
+#[derive(Serialize, Deserialize)]
 /// A packed chat
 pub struct PackedChat {
     pub ty: PackedType,
