@@ -1,3 +1,12 @@
+use std::fmt::Debug;
+use std::io;
+
+use chrono::{DateTime, Utc};
+
+use grammers_tl_types as tl;
+use grammers_tl_types::{Deserializable, Serializable};
+
+use crate::Client;
 // Copyright 2020 - developers of the `grammers` project.
 //
 // Licensed under the Apache License, Version 2.0 <LICENSE-APACHE or
@@ -6,10 +15,6 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 use crate::types::photo_sizes::{PhotoSize, VecExt};
-use crate::Client;
-use chrono::{DateTime, Utc};
-use grammers_tl_types as tl;
-use std::fmt::Debug;
 
 #[derive(Clone, Debug, PartialEq)]
 pub struct Photo {
@@ -140,7 +145,7 @@ impl Photo {
                         .map(|ps| ps.photo_type())
                         .unwrap_or(String::from("w")),
                 }
-                .into(),
+                    .into(),
             ),
         })
     }
@@ -159,7 +164,7 @@ impl Photo {
                     access_hash: photo.access_hash,
                     file_reference: photo.file_reference.clone(),
                 }
-                .into(),
+                    .into(),
                 _ => eInputPhoto::Empty,
             },
             ttl_seconds: self.photo.ttl_seconds,
@@ -241,7 +246,7 @@ impl Document {
                     file_reference: document.file_reference.clone(),
                     thumb_size: String::new(),
                 }
-                .into(),
+                    .into(),
             ),
         })
     }
@@ -260,7 +265,7 @@ impl Document {
                     access_hash: document.access_hash,
                     file_reference: document.file_reference.clone(),
                 }
-                .into(),
+                    .into(),
                 _ => eInputDocument::Empty,
             },
             ttl_seconds: self.document.ttl_seconds,
@@ -556,7 +561,7 @@ impl Poll {
     }
 
     /// Iterator over poll answer options
-    pub fn iter_answers(&self) -> impl Iterator<Item = &tl::types::PollAnswer> {
+    pub fn iter_answers(&self) -> impl Iterator<Item=&tl::types::PollAnswer> {
         self.poll.answers.iter().map(|answer| match answer {
             tl::enums::PollAnswer::Answer(answer) => answer,
         })
@@ -573,7 +578,7 @@ impl Poll {
     /// how much voters chose each answer and wether current option
     pub fn iter_voters_summary(
         &self,
-    ) -> Option<impl Iterator<Item = &tl::types::PollAnswerVoters>> {
+    ) -> Option<impl Iterator<Item=&tl::types::PollAnswerVoters>> {
         self.results.results.as_ref().map(|results| {
             results.iter().map(|result| match result {
                 tl::enums::PollAnswerVoters::Voters(voters) => voters,
@@ -611,7 +616,7 @@ impl Geo {
                 long: self.geo.long,
                 accuracy_radius: self.geo.accuracy_radius,
             }
-            .into(),
+                .into(),
         }
     }
 
@@ -917,11 +922,11 @@ impl From<Media> for tl::enums::MessageMedia {
                 poll: poll.into(),
                 results: results.into(),
             }
-            .into(),
+                .into(),
             Media::Geo(geo) => MessageMediaGeo {
                 geo: eGeoPoint::Point(geo.geo),
             }
-            .into(),
+                .into(),
             Media::Dice(dice) => dice.dice.into(),
             Media::Venue(venue) => venue.venue.into(),
             Media::GeoLive(geolive) => geolive.geolive.into(),
@@ -934,5 +939,22 @@ impl From<Media> for tl::enums::MessageMedia {
 impl From<Uploaded> for tl::enums::InputFile {
     fn from(uploaded: Uploaded) -> Self {
         uploaded.input_file
+    }
+}
+
+
+impl TryFrom<&[u8]> for Uploaded {
+    type Error = io::Error;
+    fn try_from(bytes: &[u8]) -> io::Result<Self> {
+        let tl_input = tl::enums::InputFile::from_bytes(bytes).map_err(
+            |e| io::Error::new(io::ErrorKind::InvalidData, e),
+        )?;
+        Ok(Uploaded::_from_raw(tl_input))
+    }
+}
+
+impl From<Uploaded> for Vec<u8> {
+    fn from(uploaded: Uploaded) -> Self {
+        uploaded.input_file.to_bytes()
     }
 }
