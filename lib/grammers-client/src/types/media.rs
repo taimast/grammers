@@ -943,9 +943,9 @@ impl From<Uploaded> for tl::enums::InputFile {
 }
 
 
-impl TryFrom<&[u8]> for Uploaded {
+impl TryFrom<&Vec<u8>> for Uploaded {
     type Error = io::Error;
-    fn try_from(bytes: &[u8]) -> io::Result<Self> {
+    fn try_from(bytes: &Vec<u8>) -> io::Result<Self> {
         let tl_input = tl::enums::InputFile::from_bytes(bytes).map_err(
             |e| io::Error::new(io::ErrorKind::InvalidData, e),
         )?;
@@ -953,8 +953,8 @@ impl TryFrom<&[u8]> for Uploaded {
     }
 }
 
-impl From<Uploaded> for Vec<u8> {
-    fn from(uploaded: Uploaded) -> Self {
-        uploaded.input_file.to_bytes()
+impl Into<Vec<u8>> for Uploaded {
+    fn into(self) -> Vec<u8> {
+        self.input_file.to_bytes()
     }
 }
