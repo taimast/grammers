@@ -6,6 +6,8 @@
 // option. This file may not be copied, modified, or distributed
 // except according to those terms.
 
+#![deny(unsafe_code)]
+
 //! This library is a high-level implementation to access [Telegram's API], which essentially
 //! lets you automate everything you can do with official Telegram clients and more from Rust,
 //! or even control bot accounts, making it a viable alternative to using the [Telegram Bot API].
@@ -46,3 +48,9 @@ pub(crate) mod utils;
 
 pub use client::{Client, Config, InitParams, SignInError};
 pub use types::{button, reply_markup, ChatMap, InputMessage, Update};
+
+pub use grammers_mtproto::transport;
+pub use grammers_mtsender::{FixedReconnect, InvocationError, NoReconnect, ReconnectionPolicy};
+pub use grammers_session as session;
+#[cfg(feature = "unstable_raw")]
+pub use grammers_tl_types;

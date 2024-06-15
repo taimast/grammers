@@ -13,7 +13,7 @@ use crate::types::{
     chats::AdminRightsBuilderInner, chats::BannedRightsBuilderInner, AdminRightsBuilder,
     BannedRightsBuilder, Chat, ChatMap, IterBuffer, Message, Participant, Photo, User,
 };
-use grammers_mtproto::mtp::RpcError;
+use grammers_mtsender::RpcError;
 pub use grammers_mtsender::{AuthorizationError, InvocationError};
 use grammers_session::{PackedChat, PackedType};
 use grammers_tl_types as tl;
@@ -384,7 +384,7 @@ impl Client {
                 channel_id: chat_id,
             }) => chats
                 .into_iter()
-                .map(Chat::from_chat)
+                .map(Chat::from_raw)
                 .find(|chat| chat.id() == chat_id),
         })
     }
@@ -651,7 +651,7 @@ impl Client {
                 if res.len() != 1 {
                     panic!("fetching only one chat should exactly return one chat");
                 }
-                Chat::from_chat(res.pop().unwrap())
+                Chat::from_raw(res.pop().unwrap())
             }
             PackedType::Megagroup | PackedType::Broadcast | PackedType::Gigagroup => {
                 let mut res = match self
@@ -669,7 +669,7 @@ impl Client {
                 if res.len() != 1 {
                     panic!("fetching only one chat should exactly return one chat");
                 }
-                Chat::from_chat(res.pop().unwrap())
+                Chat::from_raw(res.pop().unwrap())
             }
         })
     }
@@ -846,7 +846,7 @@ impl Client {
         };
 
         match update_chat {
-            Some(chats) if !chats.is_empty() => Ok(Some(Chat::from_chat(chats[0].clone()))),
+            Some(chats) if !chats.is_empty() => Ok(Some(Chat::from_raw(chats[0].clone()))),
             Some(chats) if chats.is_empty() => Ok(None),
             None => Ok(None),
             Some(_) => Ok(None),
